@@ -1,50 +1,28 @@
-import React from "react";
+// import React from "react";
+import { useState } from "react";
 import appConfig from "../config.json";
-import { Box, Button, Text, TextField, Image } from "@skynexui/components";
+import {
+  Box,
+  Button,
+  Text,
+  TextField,
+  Image as Img,
+} from "@skynexui/components";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: "Open Sans", sans-serif;
-      }
-      /* App fit Height */
-      html,
-      body,
-      #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */
-    `}</style>
-  );
-}
-
+import Image from "next/image";
 function Title({ title, tag }) {
-  const Tag = tag || "h1";
+  const Tag = tag;
   return (
     <>
       <Tag>{title}</Tag>
       <style jsx>
         {`
           ${Tag} {
-            color: red;
             font-size: 24px;
             font-weight: 600;
+            color: ${appConfig.theme.colors.neutrals[100]};
           }
         `}
       </style>
@@ -53,7 +31,15 @@ function Title({ title, tag }) {
 }
 
 export default function PaginaInicial() {
-  const username = "adriel45dev";
+  // const [imgSrc, setImgSrc] = useState(`https://github.com/${username}.png`);
+
+  const [username, setUsername] = useState("adriel45dev");
+  const roteamento = useRouter();
+
+  const getUser = (e) => {
+    const input = e.target.value;
+    setUsername(input);
+  };
 
   return (
     <>
@@ -64,7 +50,6 @@ export default function PaginaInicial() {
         <link rel="shortcut icon" href="/favicon.ico" />
       </Head>
 
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: "flex",
@@ -99,6 +84,10 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              roteamento.push("/chat");
+            }}
             styleSheet={{
               display: "flex",
               flexDirection: "column",
@@ -109,15 +98,19 @@ export default function PaginaInicial() {
               marginBottom: "32px",
             }}
           >
-            <Title tag="h2">Boas vindas de volta!</Title>
-
-            <Image
+            <Img
               styleSheet={{
                 marginBottom: "16px",
                 width: "60px",
               }}
-              src={`https://cdn-icons-png.flaticon.com/512/3902/3902021.png`}
+              src={"images/rocket-launch.svg"}
+              styleSheet={{
+                width: "96px",
+                marginBottom: "16px",
+              }}
             />
+
+            <Title tag="h2" title="This is Not Rocket Science!" />
 
             <Text
               variant="body3"
@@ -131,6 +124,8 @@ export default function PaginaInicial() {
             </Text>
 
             <TextField
+              onChange={getUser}
+              value={username}
               fullWidth
               textFieldColors={{
                 neutral: {
@@ -142,6 +137,7 @@ export default function PaginaInicial() {
               }}
             />
             <Button
+              disabled={username.length < 2}
               type="submit"
               label="Entrar"
               fullWidth
@@ -171,7 +167,7 @@ export default function PaginaInicial() {
               minHeight: "240px",
             }}
           >
-            <Image
+            <Img
               styleSheet={{
                 borderRadius: "50%",
                 marginBottom: "16px",
